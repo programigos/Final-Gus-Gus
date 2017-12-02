@@ -99,13 +99,13 @@ Argentina
 19-Banega-Mediocampista-29
 20-LoCelso-Mediocampista-21
 22-Gómez-Mediocampista-29
-24-RigoniMediocampista-24
-25-BelluschiMediocampista-34
+24-Rigoni-Mediocampista-24
+25-Belluschi-Mediocampista-34
 7-Benedetto-Delantero-29
 9-Agüero-Delantero-29
 10-Messi-Delantero-30
 11-DiMaría-Delantero-29
-21-DybalaDelantero-24
+21-Dybala-Delantero-24
 26-Pavón-Delantero-21
 
 
