@@ -1,4 +1,6 @@
 #include <iostream>
+#include <cstdlib>
+#include <fstream>
 #include "aveliano.h"
 #include "lista.h"
 #include <vector>
@@ -28,14 +30,32 @@ struct Player{
 		seleccion=sl;
 		posicion=pos;
 	}
+	Player(){}
 	~Player(){}
+	bool operator ==(Player &A){
+		bool a=A.apellido == this->apellido;
+		bool b=A.dorsal == this->dorsal;
+		bool c=A.edad == this->edad;
+		bool d=A.posicion == this->posicion;
+		bool e=A.seleccion == this->seleccion;
+		return e && a && c && b && d;
+	}
+	void imprimir(){
+		cout<< "< "<<seleccion<<" > : "<<dorsal<<" | "<<apellido<<"("<<edad<<" años)"<<" | "<<posicion<<" ||"<<endl;
+	}
 };
-void insertarSeleccion(string txt,vector<list<Player*>> &paises){
-	list<Player*> nn(txt);
-	cout<<nn.name<<endl;
-	paises.push_back(nn);
-}
-void insertarJugador(vector<list<Player*>> &paises){
+struct pushBack{
+	inline bool operator()(Player &A,Player &B){
+		return 1;
+	}
+};
+struct pNro{
+	inline bool operator()(Player &A,Player &B){
+		unsigned int a=A.dorsal,b=B.dorsal;
+		return a<=b;
+	}
+};
+void insertarJugador(list<Player,pushBack> &jug){
 	string n,ap;
 	char pos;
 	unsigned int no,ed;
@@ -45,26 +65,29 @@ void insertarJugador(vector<list<Player*>> &paises){
 	cout<<"Posicion        : ";cin>>pos;
 	cout<<"Nro de camiseta : ";cin>>no;
 	Player *newPlayer = new Player(no,ap,ed,n,pos);
-	paises[0].insert(newPlayer);
-//	cout<<paises[0][0]->apellido<<"sssws"<<endl;
+	jug.insert(*newPlayer);
 }
-void eliminarSeleccion(){}
 void eliminarJugador(){}
 
-void lpe(AvelianTree<list<Player*>,Mayor<int>> &t){
+void lpe(AvelianTree<Node<Player*>,Mayor<int>> &t){
 	cout<<"por edad"<<endl;
 }
-void lpP(AvelianTree<list<Player*>,Mayor<int>> &t){
+void lpP(AvelianTree<Node<Player*>,Mayor<int>> &t){
 	cout<<"por posicion"<<endl;
 }
-void lps(AvelianTree<list<Player*>,Mayor<int>> &t){
+void lps(AvelianTree<Node<Player*>,Mayor<int>> &t){
 	cout<<"por seleccion"<<endl;
 }
+void printPlayers(list<Player,pushBack> &p){
+	nodo<Player> *t = p.head;
+	while (t) {
+		t->valor.imprimir();
+		t = t->next;
+	}
+}
 int main(){
-	vector<list<Player*>> Naciones;
-	list<Player*> pe("Peru");
-	Naciones.push_back(pe);
-	AvelianTree<list<Player*>,Mayor<int>> porEdad , porPos , RUSSIA;
+	list<Player,pushBack> AllPick("");
+	AvelianTree<Node<Player*>,Mayor<int>> porEdad , porPos , RUSSIA;
 	
 	///first menu
 	cout<<"  ______________________________________  "<<endl;
@@ -89,26 +112,24 @@ int main(){
 		}
 		else if(opcion == '1'){
 			cout<<"--------------MODIFICAR---------------"<<endl;
-			cout<<"1 -> añadir seleccion"<<endl;
-			cout<<"2 -> añadir jugador"<<endl;
-			cout<<"3 -> eliminar seleccion"<<endl;
-			cout<<"4 -> eliminar jugador"<<endl;
+			cout<<"1 -> añadir jugador"<<endl;
+			cout<<"2 -> eliminar jugador"<<endl;
+			cout<<"3 -> LISTA DE JUGADORES"<<endl;
 			cout<<endl;
 			cout<<"0 -> atras"<<endl;
 			cin>>opcion;
 			system("cls");
-			if(opcion=='1'||opcion=='2'||opcion=='3'||opcion=='4'){
+			if(opcion=='1'||opcion=='2'||opcion=='3'){
 				switch(opcion){
-				case '1':
-					insertarSeleccion("mexico",Naciones);
-					break;//insertar seleccion
 				case '2':
-					insertarJugador(Naciones);
-					break;//insertar jugador
-				case '3':
-					break;//borrar seleccion
-				case '4':
 					break;//borrar jugador
+				case '1':
+					insertarJugador(AllPick);
+					break;//añadir jugador
+				case '3':
+					printPlayers(AllPick);
+					cin>>op;
+					break;//lista de jugadores
 				}
 			}
 			else{

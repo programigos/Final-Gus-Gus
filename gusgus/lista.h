@@ -22,11 +22,12 @@ nodo<T>::nodo(T v,nodo<T>* n_next)
 template <class T>
 nodo<T>::~nodo() {}
 
-template <class T>
+template <class T,class C>
 struct list {
 	nodo<T>* head;
 	string name;
 	list(string);
+	C c;
 	~list();
 	bool find(T x, nodo<T>**& p);
 	bool insert(T x);
@@ -42,33 +43,34 @@ struct list {
 		}
 	}
 };
-template <class T>
-list<T>::list(string a)
+template <class T,class C>
+list<T,C>::list(string a)
 {
 	head = nullptr;
 	name = a;
 }
-template <class T>
-list<T>::~list()
+template <class T,class C>
+list<T,C>::~list()
 {
 	nodo<T>*temp = head;
-	while (head->next)
+	while (head)
 	{
 		head = head->next;
 		delete temp;
 		temp = head;		
 	}
+	delete temp;
 }
-template <class T>
-bool list<T>::find(T x, nodo<T>**&p)
+template <class T,class C>
+bool list<T,C>::find(T x, nodo<T>**&p)
 {
 	p = &head;
-	while (*p && (*p)->valor < x)
+	while (*p && c((*p)->valor,x))
 		p = &((*p)->next);
 	return (*p) && (*p)->valor == x;
 }
-template <class T>
-bool list<T>::insert(T x)
+template <class T,class C>
+bool list<T,C>::insert(T x)
 {
 	nodo<T>** p;
 	if (find(x, p)) return 0;
@@ -78,8 +80,8 @@ bool list<T>::insert(T x)
 	*p = t;*/
 	return 1;
 }
-template <class T>
-bool list<T>::erase(T x)
+template <class T,class C>
+bool list<T,C>::erase(T x)
 {
 	nodo<T>**p;
 	if (!find(x, p)) return 0;
@@ -88,8 +90,8 @@ bool list<T>::erase(T x)
 	delete t;
 	return 1;
 }
-template <class T>
-void list<T>::print(void)
+template <class T,class C>
+void list<T,C>::print(void)
 {
 	cout << "- ";
 	nodo<T> *t = head;
