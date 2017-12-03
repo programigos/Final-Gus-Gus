@@ -3,10 +3,10 @@
 using namespace std;
 
 template <class T >
-struct nodo {
+struct nodo{
 	T valor;
-	nodo<T>* next=nullptr;
-	
+	nodo<T>* next=NULL;
+
 	nodo();
 	nodo(T v, nodo<T>* next);
 	~nodo();
@@ -46,7 +46,7 @@ struct list {
 template <class T,class C>
 list<T,C>::list()
 {
-	head = nullptr;
+	head = NULL;
 }
 template <class T,class C>
 list<T,C>::~list()
@@ -56,7 +56,7 @@ list<T,C>::~list()
 	{
 		head = head->next;
 		delete temp;
-		temp = head;		
+		temp = head;
 	}
 	delete temp;
 }
@@ -84,7 +84,7 @@ bool list<T,C>::erase(T x)
 {
 	nodo<T>**p;
 	if (!find(x, p)) return 0;
-	nodo<T>* t = *p;
+	nodo<T> *t = *p;
 	*p = (*p)->next;
 	delete t;
 	return 1;

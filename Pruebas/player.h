@@ -9,7 +9,7 @@ struct Player{
 	unsigned int edad;
 	string seleccion;
 	char posicion;
-	
+
 	Player(unsigned int nro,string ap,unsigned int ed,string sl,char pos){
 		dorsal=nro;
 		apellido=ap;
@@ -28,7 +28,11 @@ struct Player{
 		return e && a && c && b && d;
 	}
 	void imprimir(){
-		cout<< "< "<<seleccion<<" > : "<<dorsal<<" | "<<apellido<<"("<<edad<<" años)"<<" | "<<posicion<<" ||"<<endl;
+		cout<< "< "<<seleccion<<" > : "<<dorsal<<" | "<<apellido<<"("<<edad<<" años)"<<" | ";
+		if(posicion == 'M') cout << "Mediocampísta ||"<<endl;
+        else if(posicion == 'D') cout << "Delantero ||"<<endl;
+        else if(posicion == 'd') cout << "Defensa ||"<<endl;
+        else if(posicion == 'P') cout << "Portero ||"<<endl;
 	}
 	unsigned int get_nro(){
 		return dorsal;

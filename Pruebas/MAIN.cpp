@@ -6,6 +6,7 @@
 //#include "player.h"
 #include <vector>
 #include <string>
+#include <locale>
 
 using namespace std;
 
@@ -38,7 +39,21 @@ void insertarJugador(){
 	porPos.insert(newPlayer);
 	RUSSIA.insert(newPlayer);
 }
-void eliminarJugador(){}
+void eliminarJugador(){
+    string n,ap;
+	char pos;
+	unsigned int no,ed;
+	cout<<"Nacionalidad    : ";cin>>n;
+	cout<<"Apellido        : ";cin>>ap;
+	cout<<"Edad            : ";cin>>ed;
+	cout<<"Posicion        : ";cin>>pos;
+	cout<<"Nro de camiseta : ";cin>>no;
+	Player *newPlayer = new Player(no,ap,ed,n,pos);
+	AllPick.erase(*newPlayer);
+	porEdad.remove_player(newPlayer);
+	porPos.remove_player(newPlayer);
+	RUSSIA.remove_player(newPlayer);
+}
 
 void lpe(){
 	cout<<"por edad"<<endl;
@@ -76,11 +91,11 @@ void generar_mundial(list<Player,pushBack> &AllPick){
 		pos = ape.substr(ape.find('-')+1);
 		ed = pos.substr(pos.find('-')+1);
 		equi = ed.substr(ed.find('-')+1);
-		
+
 		ape = ape.substr(0,ape.find('-'));
 		pos = pos.substr(0,pos.find('-'));
 		ed = ed.substr(0,pos.find('-'));
-		
+
 		temp = new Player(atoi(num.c_str()),ape,atoi(ed.c_str()),equi,pos[0]);
 		AllPick.insert(*temp);
 		porEdad.insert(temp);
@@ -90,15 +105,16 @@ void generar_mundial(list<Player,pushBack> &AllPick){
 	entrada.close();
 }
 int main(){
-	
+
 	generar_mundial(AllPick);
+    setlocale(LC_ALL,"spanish");
 	///first menu
 	cout<<"  ______________________________________  "<<endl;
 	cout<<"||--------------------------------------||"<<endl;
 	cout<<"||        - - - Russia 2018 - - -       ||"<<endl;
 	cout<<"||______________________________________||"<<endl;
 	cout<<"  --------------------------------------  "<<endl;
-	
+
 	char opcion,op;
 	while(true){
 		cout<<"  --------------------------------------  "<<endl;
@@ -125,6 +141,7 @@ int main(){
 			if(opcion=='1'||opcion=='2'||opcion=='3'){
 				switch(opcion){
 				case '2':
+				    eliminarJugador();
 					break;//borrar jugador
 				case '1':
 					insertarJugador();
