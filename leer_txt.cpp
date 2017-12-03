@@ -18,8 +18,8 @@ public:
     }
 };
 
-int main(){
-    ifstream entrada;
+int main(){                             //Podemos meter todo esto en una funcion de crear jugadores
+    ifstream entrada;         
     vector<jugador> players;
     string num;
     string ape;
