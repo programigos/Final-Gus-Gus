@@ -1,12 +1,50 @@
 #include <iostream>
 #include <stack>
 #include <vector>
+#include <string.h>
+#include "lista.h"
+#include "player.h"
 
 using namespace std;
+
+bool compString(string a, string b){
+	for(int i=0;i<a.length();i++){
+		if(a[0]>b[0])
+			return 0;
+		if(a[0]<b[0])
+			return 1;
+	}
+	return 1;
+}
 int abs(int a){
 	if(a<0)return (a * -1);
 	return a;
 }
+struct pushBack{
+	inline bool operator()(Player &A,Player &B){
+		return 1;
+	}
+};
+struct pNro{
+	inline bool operator()(Player *A,Player *B){
+		return A->dorsal<=B->dorsal;
+	}
+};
+struct pEdad{
+	inline unsigned int operator()(Player *A){
+		return A->edad;
+	}
+};
+struct pPos{
+	inline char operator()(Player *A){
+		return A->posicion;
+	}
+};
+struct pSeleccion{
+	inline string operator()(Player *A){
+		return A->seleccion;
+	}
+};
 
 template <class T>
 void PrintVector(vector<T> a){
@@ -23,12 +61,14 @@ struct Node
 {
 	T my_x;
 	Node<T> * my_nodes[2];
+	list<Player*,pNro> hash;
 	
 	int h=0;
 	
-	Node(T x) {
+	Node(T x, Player *P) {
 		my_x = x;
 		my_nodes[0] = my_nodes[1] = NULL;
+		hash.insert(P);
 	}
 	~Node(){}
 	void print(){
@@ -55,19 +95,20 @@ void printStack(stack<Node<int>**> a){
 	}
 	cout<<endl;
 }
-template <class T,class C>
+template <class T,class G>
 struct AvelianTree
 {
 	Node<T> *root;
-	C my_c;
+	G my_g;
 	stack<Node<T>**> way;
 	
 	AvelianTree();
 	~AvelianTree();
 	
 	bool find(T x, Node<T> **&p);
-	bool insert(T x);
+	bool insert(Player *x);
 	bool remove(T x);
+	bool remove_player(Player *x);
 	Node<T>** remplazo(Node<T>**& ptr);
 	void Niveles(void);
 	
@@ -84,34 +125,34 @@ struct AvelianTree
 	void inOrden(Node<T>* r);
 };
 
-template <class T, class C>
-AvelianTree<T, C>::AvelianTree(){
+template <class T, class G>
+AvelianTree<T,G>::AvelianTree(){
 	root = 0;
 }
-template <class T, class C>
-AvelianTree<T, C>::~AvelianTree(){}
-template <class T, class C>
-bool AvelianTree<T, C>::find(T x, Node<T> **&p){
+template <class T, class G>
+AvelianTree<T,G>::~AvelianTree(){}
+template <class T, class G>
+bool AvelianTree<T,G>::find(T x, Node<T> **&p){
 	p=&root ;
 	while(*p && (*p)->my_x != x ){
 		way.push(p);
-		p=&((*p)->my_nodes[my_c((*p)->my_x,x)]);
+		p=&((*p)->my_nodes[(*p)->my_x<x]);
 	}
 	way.push(p);
 	return !!(*p);
 }
-template <class T, class C>
-bool AvelianTree<T, C>::insert(T x){
+template <class T, class G>
+bool AvelianTree<T,G>::insert(Player *x){
 	Node<T>**p;
-	if (find(x, p)) 
-		return 0;
-	*p = new Node<T>(x);
-	
+	if(find(my_g(x), p)){ 
+		return (*p)->hash.insert(x);
+	}
+	*p = new Node<T>(my_g(x),x);
 	chekeo();
 	return 1;
 }
-template <class T, class C>
-bool AvelianTree<T, C>::remove(T x){
+template <class T, class G>
+bool AvelianTree<T,G>::remove(T x){
 	Node<T>**p;
 	if (!find(x, p))
 		return 0;
@@ -130,9 +171,18 @@ bool AvelianTree<T, C>::remove(T x){
 		rechekeo();
 		return 1;
 }
-
-template<class T, class C>
-Node<T>** AvelianTree<T, C>::remplazo(Node<T>**& ptr)
+template <class T, class G>
+bool AvelianTree<T,G>::remove_player(Player *x){
+	Node<T>**p;
+	if (!find(my_g(x), p))
+		return 0;
+	p->hash.erase(x);
+	if(p->hash->head==nullptr)
+		remove(my_g(x));
+	return 1;
+}
+template<class T, class G>
+Node<T>** AvelianTree<T,G>::remplazo(Node<T>**& ptr)
 {
 	Node<T>** t = ptr;
 	t = &(*t)->my_nodes[0];
@@ -144,8 +194,8 @@ Node<T>** AvelianTree<T, C>::remplazo(Node<T>**& ptr)
 	return t;
 }
 
-template<class T, class C>
-void AvelianTree<T,C>::chekeo(){
+template<class T, class G>
+void AvelianTree<T,G>::chekeo(){
 	int hr,hl,ht,ha;
 	bool b=false;
 	Node<T>** aux = way.top();
@@ -171,13 +221,13 @@ void AvelianTree<T,C>::chekeo(){
 		way.pop();
 	}
 }
-template <class T , class C>
-void AvelianTree<T,C>::direc(Node<T>**& a,Node<T>**& i){
+template <class T, class G>
+void AvelianTree<T,G>::direc(Node<T>**& a,Node<T>**& i){
 	Node<T>** t = a;
 	T axx = (*i)->my_x;
 	bool d[3];
 	for(int j=0;(*t)->my_x != axx;j++){
-		d[j]=my_c((*t)->my_x,axx);
+		d[j]=(*t)->my_x<axx;
 		t=&((*t)->my_nodes[d[j]]);
 	}
 	if(d[0]){
@@ -194,8 +244,8 @@ void AvelianTree<T,C>::direc(Node<T>**& a,Node<T>**& i){
 	}
 }
 ///al padre le resto dos hahahahaahahah
-template<class T, class C>
-void AvelianTree<T,C>::dezSimpleR(Node<T>**& abuelo){
+template<class T, class G>
+void AvelianTree<T,G>::dezSimpleR(Node<T>**& abuelo){
 	int hr,hl,hh;
 	Node<T>*temp = *abuelo;
 	*abuelo = (*abuelo)->my_nodes[0];
@@ -215,8 +265,8 @@ void AvelianTree<T,C>::dezSimpleR(Node<T>**& abuelo){
 		(*abuelo)->h=(hl > hr)? hl+1:hr+1;
 	}
 }
-template<class T, class C>
-void AvelianTree<T,C>::dezSimpleL(Node<T>**& abuelo){
+template<class T, class G>
+void AvelianTree<T,G>::dezSimpleL(Node<T>**& abuelo){
 	int hl,hr,hh;
 	Node<T>*temp = *abuelo;
 	*abuelo = (*abuelo)->my_nodes[1];
@@ -237,8 +287,8 @@ void AvelianTree<T,C>::dezSimpleL(Node<T>**& abuelo){
 	}
 }
 ///padre baja 1, abuelo 2 y hijo sube 1 hhahahahaaha
-template<class T, class C>
-void AvelianTree<T,C>::dezDobleR(Node<T>**& abuelo){
+template<class T, class G>
+void AvelianTree<T,G>::dezDobleR(Node<T>**& abuelo){
 	Node<T>**temp = &((*abuelo)->my_nodes[0]);
 	//l y r
 	dezSimpleL(temp);
@@ -246,8 +296,8 @@ void AvelianTree<T,C>::dezDobleR(Node<T>**& abuelo){
 	//(*temp)->my_nodes[0]->h+=1;
 	dezSimpleR(abuelo);
 }
-template<class T, class C>
-void AvelianTree<T,C>::dezDobleL(Node<T>**& abuelo){
+template<class T, class G>
+void AvelianTree<T,G>::dezDobleL(Node<T>**& abuelo){
 	Node<T>**temp = &((*abuelo)->my_nodes[1]);
 	//r y l
 	dezSimpleR(temp);
@@ -255,15 +305,16 @@ void AvelianTree<T,C>::dezDobleL(Node<T>**& abuelo){
 	//	(*temp)->my_nodes[1]->h +=1;
 	dezSimpleL(abuelo);
 }
-template <class T, class C>
-void AvelianTree<T,C>::inOrden(Node<T>* r){
+template <class T, class G>
+void AvelianTree<T,G>::inOrden(Node<T>* r){
 	if(!r)return;
 	inOrden(r->my_nodes[0]);
-	cout<<" "<<r->my_x;
+	cout<<" ";
+	r->hash.print();
 	inOrden(r->my_nodes[1]);
 }
-template<class T, class C>
-void AvelianTree<T,C>::Niveles(void){
+template<class T, class G>
+void AvelianTree<T,G>::Niveles(void){
 	Node<T> *p=root;
 	vector<Node<T>*> niveles;
 	niveles.push_back(p);
@@ -297,8 +348,8 @@ vector<T> llenarV(stack<T> a){
 	}
 	return q;
 }
-template<class T, class C>
-void AvelianTree<T,C>::rechekeo(){
+template<class T, class G>
+void AvelianTree<T,G>::rechekeo(){
 	Node<T>** aux;
 	int hl,hr,ht,ha;
 	way.pop();
@@ -317,8 +368,8 @@ void AvelianTree<T,C>::rechekeo(){
 		way.pop();
 	}
 }
-template <class T, class C>
-void AvelianTree<T,C>::direc2(Node<T>**& x){
+template <class T, class G>
+void AvelianTree<T,G>::direc2(Node<T>**& x){
 	int ht,hl,hr;
 	hl = ((*x)->my_nodes[0] == NULL)? 0 :(*x)->my_nodes[0]->h;
 	hr = ((*x)->my_nodes[1] == NULL)? 0 :(*x)->my_nodes[1]->h;

@@ -1,11 +1,12 @@
 #include <iostream>
 #include <string>
 using namespace std;
+
 template <class T >
 struct nodo {
 	T valor;
-	nodo<T>* next=NULL;
-
+	nodo<T>* next=nullptr;
+	
 	nodo();
 	nodo(T v, nodo<T>* next);
 	~nodo();
@@ -25,8 +26,7 @@ nodo<T>::~nodo() {}
 template <class T,class C>
 struct list {
 	nodo<T>* head;
-	string name;
-	list(string);
+	list();
 	C c;
 	~list();
 	bool find(T x, nodo<T>**& p);
@@ -44,10 +44,9 @@ struct list {
 	}
 };
 template <class T,class C>
-list<T,C>::list(string a)
+list<T,C>::list()
 {
-	head = NULL;
-	name = a;
+	head = nullptr;
 }
 template <class T,class C>
 list<T,C>::~list()
@@ -57,7 +56,7 @@ list<T,C>::~list()
 	{
 		head = head->next;
 		delete temp;
-		temp = head;
+		temp = head;		
 	}
 	delete temp;
 }
@@ -96,9 +95,9 @@ void list<T,C>::print(void)
 	cout << "- ";
 	nodo<T> *t = head;
 	while (t) {
-		cout << t->valor << " - ";
+		t->valor->imprimir();
+		cout  << endl;
 		t = t->next;
 	}
-	cout << endl;
+//	cout << endl;
 }
-//-----------------------------------------------------------//

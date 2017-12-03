@@ -2,10 +2,10 @@
 #include <cstdlib>
 #include <fstream>
 #include "aveliano.h"
-#include "lista.h"
+//#include "lista.h"
+//#include "player.h"
 #include <vector>
 #include <string>
-#include <locale>
 
 using namespace std;
 
@@ -17,46 +17,13 @@ void sleep(){
 		i++;
 	}
 }
-struct Player{
-	unsigned int dorsal;
-	string apellido;
-	unsigned int edad;
-	string seleccion;
-	char posicion;
 
-	Player(unsigned int nro,string ap,unsigned int ed,string sl,char pos){
-		dorsal=nro;
-		apellido=ap;
-		edad=ed;
-		seleccion=sl;
-		posicion=pos;
-	}
-	Player(){}
-	~Player(){}
-	bool operator ==(Player &A){
-		bool a=A.apellido == this->apellido;
-		bool b=A.dorsal == this->dorsal;
-		bool c=A.edad == this->edad;
-		bool d=A.posicion == this->posicion;
-		bool e=A.seleccion == this->seleccion;
-		return e && a && c && b && d;
-	}
-	void imprimir(){
-		cout<< "< "<<seleccion<<" > : "<<dorsal<<" | "<<apellido<<"("<<edad<<" años)"<<" | "<<posicion<<" ||"<<endl;
-	}
-};
-struct pushBack{
-	inline bool operator()(Player &A,Player &B){
-		return 1;
-	}
-};
-struct pNro{
-	inline bool operator()(Player &A,Player &B){
-		unsigned int a=A.dorsal,b=B.dorsal;
-		return a<=b;
-	}
-};
-void insertarJugador(list<Player,pushBack> &jug){
+list<Player,pushBack> AllPick;
+AvelianTree<unsigned int,pEdad> porEdad;
+AvelianTree<char,pPos> porPos;
+AvelianTree<string,pSeleccion> RUSSIA;
+
+void insertarJugador(){
 	string n,ap;
 	char pos;
 	unsigned int no,ed;
@@ -66,18 +33,24 @@ void insertarJugador(list<Player,pushBack> &jug){
 	cout<<"Posicion        : ";cin>>pos;
 	cout<<"Nro de camiseta : ";cin>>no;
 	Player *newPlayer = new Player(no,ap,ed,n,pos);
-	jug.insert(*newPlayer);
+	AllPick.insert(*newPlayer);
+	porEdad.insert(newPlayer);
+	porPos.insert(newPlayer);
+	RUSSIA.insert(newPlayer);
 }
 void eliminarJugador(){}
 
-void lpe(AvelianTree<Node<Player*>,Mayor<int> > &t){
+void lpe(){
 	cout<<"por edad"<<endl;
+	porEdad.inOrden(porEdad.root);
 }
-void lpP(AvelianTree<Node<Player*>,Mayor<int> > &t){
+void lpP(){
 	cout<<"por posicion"<<endl;
+	porPos.inOrden(porPos.root);
 }
-void lps(AvelianTree<Node<Player*>,Mayor<int> > &t){
+void lps(){
 	cout<<"por seleccion"<<endl;
+	RUSSIA.inOrden(RUSSIA.root);
 }
 void printPlayers(list<Player,pushBack> &p){
 	nodo<Player> *t = p.head;
@@ -87,49 +60,45 @@ void printPlayers(list<Player,pushBack> &p){
 	}
 }
 void generar_mundial(list<Player,pushBack> &AllPick){
-    ifstream entrada;
-    string num;
-    string ape;
-    string pos;
-    string ed;
-    string equi;
-    string completo;
-    Player temp;
-    entrada.open("teams.txt");
-    while(!entrada.eof()){
-        getline(entrada,completo);
-        num = completo.substr(0,completo.find('-'));
-        ape = completo.substr(completo.find('-')+1);
-        pos = ape.substr(ape.find('-')+1);
-        ed = pos.substr(pos.find('-')+1);
-        equi = ed.substr(ed.find('-')+1);
-
-        ape = ape.substr(0,ape.find('-'));
-        pos = pos.substr(0,pos.find('-'));
-        ed = ed.substr(0,pos.find('-'));
-
-        temp.apellido = ape;
-        temp.dorsal = atoi(num.c_str());
-        temp.edad = atoi(ed.c_str());
-        temp.posicion = pos[0];
-        temp.seleccion = equi;
-        AllPick.insert(temp);
-    }
-    entrada.close();
+	ifstream entrada;
+	string num;
+	string ape;
+	string pos;
+	string ed;
+	string equi;
+	string completo;
+	Player *temp;
+	entrada.open("teams.txt");
+	while(!entrada.eof()){
+		getline(entrada,completo);
+		num = completo.substr(0,completo.find('-'));
+		ape = completo.substr(completo.find('-')+1);
+		pos = ape.substr(ape.find('-')+1);
+		ed = pos.substr(pos.find('-')+1);
+		equi = ed.substr(ed.find('-')+1);
+		
+		ape = ape.substr(0,ape.find('-'));
+		pos = pos.substr(0,pos.find('-'));
+		ed = ed.substr(0,pos.find('-'));
+		
+		temp = new Player(atoi(num.c_str()),ape,atoi(ed.c_str()),equi,pos[0]);
+		AllPick.insert(*temp);
+		porEdad.insert(temp);
+		porPos.insert(temp);
+		RUSSIA.insert(temp);
+	}
+	entrada.close();
 }
 int main(){
-    setlocale(LC_ALL,"spanish");
-	list<Player,pushBack> AllPick("");
+	
 	generar_mundial(AllPick);
-	AvelianTree<Node<Player*>,Mayor<int> > porEdad , porPos , RUSSIA;
-
 	///first menu
 	cout<<"  ______________________________________  "<<endl;
 	cout<<"||--------------------------------------||"<<endl;
 	cout<<"||        - - - Russia 2018 - - -       ||"<<endl;
 	cout<<"||______________________________________||"<<endl;
 	cout<<"  --------------------------------------  "<<endl;
-
+	
 	char opcion,op;
 	while(true){
 		cout<<"  --------------------------------------  "<<endl;
@@ -158,7 +127,7 @@ int main(){
 				case '2':
 					break;//borrar jugador
 				case '1':
-					insertarJugador(AllPick);
+					insertarJugador();
 					break;//añadir jugador
 				case '3':
 					printPlayers(AllPick);
@@ -183,17 +152,17 @@ int main(){
 				switch(opcion){
 				case '1':
 					sleep();cout<<" . ";sleep();cout<<" . ";sleep();cout<<" . "<<endl;
-					lpe(porEdad);
+					lpe();
 					cin>>op;
 					break;//lista por edad
 				case '2':
 					sleep();cout<<" . ";sleep();cout<<" . ";sleep();cout<<" . "<<endl;
-					lpP(porPos);
+					lpP();
 					cin>>op;
 					break;//lista por posicion
 				case '3':
 					sleep();cout<<" . ";sleep();cout<<" . ";sleep();cout<<" . "<<endl;
-					lps(RUSSIA);
+					lps();
 					cin>>op;
 					break;//lista de selecciones
 				}
