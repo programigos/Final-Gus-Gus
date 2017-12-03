@@ -9,9 +9,9 @@ using namespace std;
 
 bool compString(string a, string b){
 	for(int i=0;i<a.length();i++){
-		if(a[0]>b[0])
+		if(a[i]>b[i])
 			return 0;
-		if(a[0]<b[0])
+		if(a[i]<b[i])
 			return 1;
 	}
 	return 1;
@@ -123,6 +123,10 @@ struct AvelianTree
 	void dezDobleL(Node<T>**& abuelo);
 
 	void inOrden(Node<T>* r);
+
+	void print(T x);
+
+	void rango(Node<T>* r,int bot, int top);
 };
 
 template <class T, class G>
@@ -131,6 +135,17 @@ AvelianTree<T,G>::AvelianTree(){
 }
 template <class T, class G>
 AvelianTree<T,G>::~AvelianTree(){}
+
+template <class T, class G>
+void AvelianTree<T,G>::print(T x){
+	Node<T> **p;
+	if(!find(x, p)){
+        cout << "No se encontro ese dato" << endl;;
+        return;
+	}
+	(*p)->hash.print();
+}
+
 template <class T, class G>
 bool AvelianTree<T,G>::find(T x, Node<T> **&p){
 	p=&root ;
@@ -313,6 +328,16 @@ void AvelianTree<T,G>::inOrden(Node<T>* r){
 	r->hash.print();
 	inOrden(r->my_nodes[1]);
 }
+
+template <class T, class G>
+void AvelianTree<T,G>::rango(Node<T>* r, int bot, int top){
+	if(!r)return;
+	rango(r->my_nodes[0],bot,top);
+	cout<<" ";
+	if(r->my_x >= bot && r->my_x <= top) r->hash.print();
+	rango(r->my_nodes[1],bot,top);
+}
+
 template<class T, class G>
 void AvelianTree<T,G>::Niveles(void){
 	Node<T> *p=root;

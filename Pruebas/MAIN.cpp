@@ -57,15 +57,30 @@ void eliminarJugador(){
 
 void lpe(){
 	cout<<"por edad"<<endl;
-	porEdad.inOrden(porEdad.root);
+	int a,b;
+	cout << "Ingrese la edad mínima: ";
+	cin >> a;
+	cout << "Ingrese la edad máxima: ";
+	cin >> b;
+	cout << endl;
+	porEdad.rango(porEdad.root,a,b);
+	///porEdad.inOrden(porEdad.root);
 }
 void lpP(){
 	cout<<"por posicion"<<endl;
-	porPos.inOrden(porPos.root);
+	cout << "Ingrese una posicion: ";
+	char pos;
+	cin >> pos;
+	porPos.print(pos);
+	///porPos.inOrden(porPos.root);
 }
 void lps(){
 	cout<<"por seleccion"<<endl;
-	RUSSIA.inOrden(RUSSIA.root);
+	cout << "Ingrese una seleccion: ";
+	string sel;
+	cin >> sel;
+	RUSSIA.print(sel);
+	///RUSSIA.inOrden(RUSSIA.root);
 }
 void printPlayers(list<Player,pushBack> &p){
 	nodo<Player> *t = p.head;
