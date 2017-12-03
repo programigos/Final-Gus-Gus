@@ -7,14 +7,13 @@
 using namespace std;
 
 void sleep(){
-	int i=0,o;
-	while(i<100000){
-		o=1+1+1+1+1+1+1+1+1+1+1+1;
+	long i=0,o;
+	while(i<100000000){
+		o=2*2+2*2+2*2+2*2+2*2+2*2+2*2+2*2+2*2+2*2+2*2+2*2+2*2+2*2+2*2+2*2+2*2+2*2+2*2+2*2+2*2+2*2+2*2+2*2+2*2+2*2+2*2+2*2+2*2+2*2+2*2+2;
 		o=0;
 		i++;
 	}
 }
-
 struct Player{
 	unsigned int dorsal;
 	string apellido;
@@ -52,6 +51,15 @@ void insertarJugador(vector<list<Player*>> &paises){
 void eliminarSeleccion(){}
 void eliminarJugador(){}
 
+void lpe(AvelianTree<list<Player*>,Mayor<int>> &t){
+	cout<<"por edad"<<endl;
+}
+void lpP(AvelianTree<list<Player*>,Mayor<int>> &t){
+	cout<<"por posicion"<<endl;
+}
+void lps(AvelianTree<list<Player*>,Mayor<int>> &t){
+	cout<<"por seleccion"<<endl;
+}
 int main(){
 	vector<list<Player*>> Naciones;
 	list<Player*> pe("Peru");
@@ -65,7 +73,7 @@ int main(){
 	cout<<"||______________________________________||"<<endl;
 	cout<<"  --------------------------------------  "<<endl;
 	
-	char opcion;
+	char opcion,op;
 	while(true){
 		cout<<"  --------------------------------------  "<<endl;
 		cout<<"0 -> Salir"<<endl;
@@ -119,10 +127,19 @@ int main(){
 			if(opcion=='1'||opcion=='2'||opcion=='3'){
 				switch(opcion){
 				case '1':
+					sleep();cout<<" . ";sleep();cout<<" . ";sleep();cout<<" . "<<endl;
+					lpe(porEdad);
+					cin>>op;
 					break;//lista por edad
 				case '2':
+					sleep();cout<<" . ";sleep();cout<<" . ";sleep();cout<<" . "<<endl;
+					lpP(porPos);
+					cin>>op;
 					break;//lista por posicion
 				case '3':
+					sleep();cout<<" . ";sleep();cout<<" . ";sleep();cout<<" . "<<endl;
+					lps(RUSSIA);
+					cin>>op;
 					break;//lista de selecciones
 				}
 			}
